@@ -445,6 +445,16 @@ public:
 		for (int i=0; i<cells; i++)
 			resize(data[i], fields);
 
+		// resize temperature structures
+		tmp = new double[cells];
+		for (int i=0; i<cells; i++)
+			resize(tmp[i], fields);
+
+		// resize tmc structures
+		tmc = new double[cells];
+		for (int i=0; i<cells; i++)
+			resize(tmc[i], fields);
+
 		#ifdef MPI_VERSION
 		MPI::COMM_WORLD.Barrier();
 		#endif
@@ -454,6 +464,14 @@ public:
 	~grid() {
 		delete [] data;
 		data=NULL;
+
+/*ACME project*/
+		delete [] tmp;
+		tmp=NULL;
+		delete [] tmc;
+		tmc=NULL;
+/*ACME project*/
+
 	}
 
 
@@ -478,6 +496,28 @@ public:
 			data[i] -= static_cast<T>(GRID.data[i]);
 	}
 
+/*ACME project*/
+	template <typename U> grid& AssignTmp(const U& value) {
+		for (int i=0; i<cells; i++)
+			tmp[i] = static_cast<double>(value);
+	}
+
+	template <typename U> grid& AssignTmp(const grid<dim, U>& GRID) {
+		for (int i=0; i<cells; i++)
+			tmp[i] = static_cast<double>(GRID.tmp[i]);
+	}
+
+	template <typename U> grid& AssignTmc(const U& value) {
+		for (int i=0; i<cells; i++)
+			tmc[i] = static_cast<double>(value);
+	}
+
+	template <typename U> grid& AssignTmc(const grid<dim, U>& GRID) {
+		for (int i=0; i<cells; i++)
+			tmc[i] = static_cast<double>(GRID.tmc[i]);
+	}
+/*ACME project*/
+
 
 	// subscript operators
 	target < dim - 1, 0, T > operator [](int x) const {
@@ -487,6 +527,24 @@ public:
 
 	T& operator()(MMSP::vector<int> x) const {
 		T* p = data;
+		for (int i=0; i<dim; i++) {
+			check_boundary(x[i], x0[i], x1[i], b0[i], b1[i]);
+			p += (x[i] - s0[i]) * sx[i];
+		}
+		return *p;
+	}
+
+	double& AccessToTmp(MMSP::vector<int> x) const {
+		double* p = tmp;
+		for (int i=0; i<dim; i++) {
+			check_boundary(x[i], x0[i], x1[i], b0[i], b1[i]);
+			p += (x[i] - s0[i]) * sx[i];
+		}
+		return *p;
+	}
+
+	double& AccessToTmc(MMSP::vector<int> x) const {
+		double* p = tmc;
 		for (int i=0; i<dim; i++) {
 			check_boundary(x[i], x0[i], x1[i], b0[i], b1[i]);
 			p += (x[i] - s0[i]) * sx[i];
@@ -1682,6 +1740,11 @@ public:
 
 protected:
 	T* data;        // local grid data
+
+/*ACME project*/
+  double* tmp;
+  double* tmc;
+/*ACME project*/
 
 	int nodes;			// number of nodes (excluding ghosts)
 	int cells;			// number of nodes (including ghosts)
