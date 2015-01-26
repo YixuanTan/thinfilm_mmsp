@@ -238,7 +238,7 @@ int main(int argc, char* argv[]) {
         number_of_grains += 1;
     }
     average_grain_size = sqrt(number_of_pixels/number_of_grains/3.14);
-
+    std::cout<<"number of grains is  "<<number_of_grains<<std::endl;
     std::ofstream ofs("grain_size.txt", std::ios::out|std::ios::app);
     ofs<<average_grain_size<<std::endl;
     ofs.close();
