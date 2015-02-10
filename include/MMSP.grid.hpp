@@ -971,7 +971,7 @@ ACME project*/
 		MPI_Request request;
 		MPI_Status status;
 
-		// Read filesystem block size (using statvfs). Default to 1024 B.
+		// Read filesystem block size (using statvfs). Default to 4096 B.
 		struct statvfs buf;
 		const unsigned long blocksize = (statvfs(".", &buf) == -1)?4096:buf.f_bsize;
 std::cout<<"11111"<<std::endl;
@@ -1014,15 +1014,17 @@ std::cout<<"outstr is  "<<outstr.str().size()<<std::endl;
 				MPI_File_iwrite_at(output,header_offset,reinterpret_cast<char*>(&np), sizeof(np), MPI_CHAR, &request);
 				MPI_Wait(&request, &status);
 				MPI_File_sync(output);
+std::cout<<"sizeof(np) is  "<<sizeof(np)<<std::endl;
 				header_offset+=sizeof(np);
 				delete [] header;
 			}
 
-      MPI::COMM_WORLD.Barrier();
-std::cout<<"at rank "<<rank<<" header_offset is "<<header_offset<<std::endl; 
 			MPI_File_sync(output);
+std::cout<<"at rank "<<rank<<" header_offset is "<<header_offset<<std::endl; 
+
       MPI::COMM_WORLD.Barrier();
-			MPI::COMM_WORLD.Bcast(&header_offset, 1, MPI::UNSIGNED_LONG, 0); // broadcast header size from rank 0
+      MPI::COMM_WORLD.Allreduce(&header_offset, &header_offset, 1, MPI_UNSIGNED_LONG, MPI_MAX);
+//			MPI::COMM_WORLD.Bcast(&header_offset, 1, MPI::UNSIGNED_LONG, 0); // broadcast header size from rank 0
 // 			MPI::COMM_WORLD.Scatter(&header_offset, 1, MPI::UNSIGNED_LONG, &header_offset, 1, MPI::UNSIGNED_LONG, 0); // broadcast header size from rank 0
 			MPI::COMM_WORLD.Barrier();
 
@@ -1111,7 +1113,7 @@ std::cout<<"offsets[np-1]+datasizes[np-1] = "<<offsets[np-1]<<"+"<<datasizes[np-
 			MPI_Request* recvrequests = NULL;
 			MPI_Status* recvstatuses = NULL;
 			int mpi_err = 0;
-std::cout<<"1111134"<<std::endl;
+
 			// get grid data to write
 			const unsigned long size=write_buffer(databuffer);
 			assert(databuffer!=NULL);
@@ -1124,7 +1126,7 @@ std::cout<<"1111134"<<std::endl;
 				std::stringstream outstr;
 				outstr << type << '\n';
 				outstr << dim << '\n';
-				outstr << MMSP::fields(*this) << '\n';
+				outstr << MMSP::fields(*this) << '\nxx';
 
 				for (int i=0; i<dim; i++) outstr << MMSP::g0(*this,i) << " " << MMSP::g1(*this,i) << '\n'; // global grid dimensions
 				for (int i=0; i<dim; i++) outstr << MMSP::dx(*this,i) << '\n'; // grid spacing
