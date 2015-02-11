@@ -1021,9 +1021,9 @@ std::cout<<"sizeof(np) is  "<<sizeof(np)<<std::endl;
 
 			MPI_File_sync(output);
 std::cout<<"at rank "<<rank<<" header_offset is "<<header_offset<<std::endl; 
-
+      unsigned long header_offset_send = header_offset;
       MPI::COMM_WORLD.Barrier();
-      MPI::COMM_WORLD.Allreduce(&header_offset, &header_offset, 1, MPI_UNSIGNED_LONG, MPI_MAX);
+      MPI::COMM_WORLD.Allreduce(&header_offset_send, &header_offset, 1, MPI_UNSIGNED_LONG, MPI_MAX);
 //			MPI::COMM_WORLD.Bcast(&header_offset, 1, MPI::UNSIGNED_LONG, 0); // broadcast header size from rank 0
 // 			MPI::COMM_WORLD.Scatter(&header_offset, 1, MPI::UNSIGNED_LONG, &header_offset, 1, MPI::UNSIGNED_LONG, 0); // broadcast header size from rank 0
 			MPI::COMM_WORLD.Barrier();
