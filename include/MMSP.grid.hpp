@@ -1126,7 +1126,7 @@ std::cout<<"offsets[np-1]+datasizes[np-1] = "<<offsets[np-1]<<"+"<<datasizes[np-
 				std::stringstream outstr;
 				outstr << type << '\n';
 				outstr << dim << '\n';
-				outstr << MMSP::fields(*this) << '\nxx';
+				outstr << MMSP::fields(*this) << '\n';
 
 				for (int i=0; i<dim; i++) outstr << MMSP::g0(*this,i) << " " << MMSP::g1(*this,i) << '\n'; // global grid dimensions
 				for (int i=0; i<dim; i++) outstr << MMSP::dx(*this,i) << '\n'; // grid spacing
