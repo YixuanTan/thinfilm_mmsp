@@ -1167,7 +1167,7 @@ std::cout<<"offsets[np-1]+datasizes[np-1] = "<<offsets[np-1]<<"+"<<datasizes[np-
 			assert(datasizes[rank]==size);
 			if (rank==0) std::cout<<"  Synchronized data offsets on "<<np<<" ranks. Total size: "<<offsets[np-1]+datasizes[np-1]<<" B."<<std::endl;
 			#endif
-std::cout<<"111123432"<<std::endl;
+//std::cout<<"111123432"<<std::endl;
 			// Calculate number of  writers & write size
 			unsigned long blocks = filesize/blocksize;
 			while (blocks*blocksize<filesize)	++blocks;
@@ -1196,7 +1196,7 @@ std::cout<<"111123432"<<std::endl;
 					isWriter=true;
 				temprank++;
 			}
-std::cout<<"1111234"<<std::endl;
+//std::cout<<"1111234"<<std::endl;
 			// Determine which rank to send data to
 			unsigned int prevwriter=nwriters, nextwriter=0;
 			if (rank==0) {
@@ -1234,7 +1234,7 @@ std::cout<<"1111234"<<std::endl;
 			if (datasizes[rank]-deficiency>ws)
 				std::fprintf(stderr, "Error on Rank %u, alignment: buffered %lu B > writesize %lu B.\n", rank, datasizes[rank]-deficiency, ws);
 			#endif
-std::cout<<"111134"<<std::endl;
+//std::cout<<"111134"<<std::endl;
 			// Accumulate data
 			const unsigned int silentranks=writeranks[nextwriter]-rank; // number of MPI ranks between this rank and the next writer
 			MPI_Request sendrequest;
@@ -1261,7 +1261,7 @@ std::cout<<"111134"<<std::endl;
 				char* q=databuffer+misalignments[rank];
 				memcpy(p, q, datasizes[rank]-misalignments[rank]);
 				p+=datasizes[rank]-misalignments[rank];
-std::cout<<"11114"<<std::endl;
+//std::cout<<"11114"<<std::endl;
 				// Recv remote data into filebuffer
 				if (silentranks>0) {
 					recvrequests = new MPI_Request[silentranks];
@@ -1351,7 +1351,7 @@ std::cout<<"11114"<<std::endl;
 			} else {
 				ws = 0; // not a writer
 			}
-std::cout<<"11115"<<std::endl;
+//  std::cout<<"11115"<<std::endl;
 			MPI::COMM_WORLD.Barrier();
 			MPI_File_close(&output);
 			MPI_Info_free(&info);
