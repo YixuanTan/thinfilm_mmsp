@@ -14,31 +14,15 @@ public:
 	scalar() {}
 	scalar(const T& value) {
 		data = value;
-/*ACME project*/
-    tmp = AssignTmp(static_cast<double>(value)); // just initialize tmp to be something nonzero, like value here.
-    tmc = AssignTmc(tmp);
-/*ACME project*/
 	}
 	scalar(const scalar& s) {
 		data = s.data;
-/*ACME project*/
-    tmp = AssignTmp(static_cast<double>(s.data)); // just initialize tmp to be something nonzero, like value here.
-    tmc = AssignTmc(tmp);
-/*ACME project*/
 	}
 	template <typename U> scalar(const U& value) {
 		data = static_cast<T>(value);
-/*ACME project*/
-    tmp = AssignTmp(static_cast<double>(value)); // just initialize tmp to be something nonzero, like value here.
-    tmc = AssignTmc(tmp);
-/*ACME project*/
 	}
 	template <typename U> scalar(const scalar<U>& s) {
 		data = static_cast<T>(s);
-/*ACME project*/
-    tmp = AssignTmp(static_cast<double>(s)); // just initialize tmp to be something nonzero, like value here.
-    tmc = AssignTmc(tmp);
-/*ACME project*/
 	}
 
 	// data access operators
@@ -82,6 +66,22 @@ public:
 	}
 
 /*ACME project*/
+	scalar& AssignPfield(const T& value) {
+		Pfield = value;
+		return Pfield;
+	}
+	scalar& AssignPfield(const scalar& s) {
+		Pfield = s.Pfield;
+		return Pfield;
+	}
+	template <typename U> scalar& AssignPfield(const U& value) {
+		Pfield = static_cast<T>(value);
+		return Pfield;
+	}
+	template <typename U> scalar& AssignPfield(const scalar<U>& s) {
+		Pfield = static_cast<T>(s);
+		return Pfield;
+	}
 	scalar& AssignTmp(const T& value) {
 		tmp = value;
 		return tmp;
@@ -115,7 +115,6 @@ public:
 		return tmc;
 	}
 /*ACME project*/
-
 
 
 	// buffer I/O functions
@@ -158,10 +157,12 @@ private:
 	T data;
 
   /* ACME project*/
+  double Pfield;
   double tmc;
   double tmp;
   /* ACME project*/
 };
+
 
 // buffer I/O functions
 template <typename T> int buffer_size(const scalar<T>& s) {
@@ -314,6 +315,7 @@ public:
 	// object data
 	scalar<T>* data;
 /*ACME project*/
+  scalar<double>* Pfield;
   scalar<double>* tmp;
   scalar<double>* tmc;
 /*ACME project*/
