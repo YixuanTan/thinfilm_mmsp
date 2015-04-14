@@ -460,6 +460,21 @@ public:
 		for (int i=0; i<cells; i++)
 			resize(tmc[i], fields);
 
+		// resize InitIndex structures
+		InitIndex = new int[cells];
+		for (int i=0; i<cells; i++)
+			resize(InitIndex[i], fields);
+
+		// resize Inittmp structures
+		Inittmp = new double[cells];
+		for (int i=0; i<cells; i++)
+			resize(Inittmp[i], fields);
+
+		// resize Inittmc structures
+		Inittmc = new double[cells];
+		for (int i=0; i<cells; i++)
+			resize(Inittmc[i], fields);
+
 		#ifdef MPI_VERSION
 		MPI::COMM_WORLD.Barrier();
 		#endif
@@ -477,6 +492,12 @@ public:
 		tmp=NULL;
 		delete [] tmc;
 		tmc=NULL;
+		delete [] InitIndex;
+		InitIndex=NULL;
+		delete [] Inittmp;
+		Inittmp=NULL;
+		delete [] Inittmc;
+		Inittmc=NULL;
 /*ACME project*/
 
 	}
@@ -544,6 +565,33 @@ public:
 			pmc += (x[i] - s0[i]) * sx[i];
 		}
 		return *pmc;
+	}
+
+	int& AccessToInitIndex(MMSP::vector<int> x) const {
+		int* pInitIndex = InitIndex;
+		for (int i=0; i<dim; i++) {
+			check_boundary(x[i], x0[i], x1[i], b0[i], b1[i]);
+			pInitIndex += (x[i] - s0[i]) * sx[i];
+		}
+    return *pInitIndex;
+	}
+
+	double& AccessToInittmp(MMSP::vector<int> x) const {
+		double* pInittmp = Inittmp;
+		for (int i=0; i<dim; i++) {
+			check_boundary(x[i], x0[i], x1[i], b0[i], b1[i]);
+			pInittmp += (x[i] - s0[i]) * sx[i];
+		}
+    return *pInittmp;
+	}
+
+	double& AccessToInittmc(MMSP::vector<int> x) const {
+		double* pInittmc = Inittmc;
+		for (int i=0; i<dim; i++) {
+			check_boundary(x[i], x0[i], x1[i], b0[i], b1[i]);
+			pInittmc += (x[i] - s0[i]) * sx[i];
+		}
+    return *pInittmc;
 	}
 /* ACME project */
 
@@ -2242,6 +2290,9 @@ protected:
   double* Pfield;
   double* tmp;
   double* tmc;
+  int* InitIndex;
+  double* Inittmp;
+  double* Inittmc;
 /*ACME project*/
 
 	int nodes;			// number of nodes (excluding ghosts)
