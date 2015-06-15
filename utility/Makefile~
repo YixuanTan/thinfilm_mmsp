@@ -33,7 +33,13 @@ mmsp2z: mmsp2z.cpp $(core)
 mmsp2xyz: mmsp2xyz.cpp $(core)
 	$(compiler) $< -o $@ $(flags)
 
-mmsp2xyz200orient: mmsp2xyz200orient.cpp $(core)
+mmsp2png: mmsp2png.cpp $(core)
+	$(compiler) $< -o $@ $(flags) `libpng-config --cflags`
+
+mmsp2xyzrand: mmsp2xyzrandID.cpp $(core)
+	$(compiler) $< -o $@ $(flags)
+
+mmsp2xyz200orient: mmsp2xyz_200orient.cpp $(core)
 	$(compiler) $< -o $@ $(flags)
 
 slicer: mmspslicer.cpp $(core) /usr/include/IL/devil_cpp_wrapper.hpp

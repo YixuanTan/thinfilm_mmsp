@@ -33,6 +33,12 @@ mmsp2z: mmsp2z.cpp $(core)
 mmsp2xyz: mmsp2xyz.cpp $(core)
 	$(compiler) $< -o $@ $(flags)
 
+mmsp2png: mmsp2png.cpp $(core)
+	$(compiler) $< -o $@ $(flags) 
+
+mmsp2xyzrand: mmsp2xyzrandID.cpp $(core)
+	$(compiler) $< -o $@ $(flags)
+
 mmsp2xyz200orient: mmsp2xyz_200orient.cpp $(core)
 	$(compiler) $< -o $@ $(flags)
 

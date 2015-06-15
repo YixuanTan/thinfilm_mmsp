@@ -16,11 +16,6 @@
 
 using namespace MMSP;
 
-bool fexists(const char *filename) {
-	std::ifstream ifile(filename);
-	return ifile;
-}
-
 int main(int argc, char* argv[]) {
 	if ( argc > 4 || argc < 3 ) {
 		std::cout << "Usage: " << argv[0] << " data.dat grain_id output.csv\n";
@@ -122,7 +117,6 @@ int main(int argc, char* argv[]) {
 	  // read number of blocks
 	  int blocks;
 	  input.read(reinterpret_cast<char*>(&blocks), sizeof(blocks));
-
     std::vector<int>* grain_sizes = new std::vector<int>;
 
     double number_of_pixels=0.0;
@@ -193,12 +187,17 @@ int main(int argc, char* argv[]) {
               x[0] = lmin[0] + l;
               x[1] = lmin[1] + k;
 //              output << x[0] <<" "<< x[1] <<" "<< colors[GRID(x)%est_grains] <<"\n";
+//std::cout<< x[0] << " " << x[1] << "\n";
               output << x[0] << " " << x[1] << " " << GRID(x) << "\n";  //no color randomization
+//std::cout<< x[0] << " " << x[1] << "\n";
+//std::cout<< "GRID(x) "<<GRID(x) << "\n";
               if(max_grain_id<GRID(x)){
                 max_grain_id=GRID(x);
+//std::cout<< "max_grain_id "<<max_grain_id << "\n";
                 (*grain_sizes).resize(max_grain_id+1, 0);
               }
               (*grain_sizes)[GRID(x)]+=1;
+//std::cout<< "12314" << "\n";
             } // for l
 				  } // for k 	
 				} else if (dim == 3) {

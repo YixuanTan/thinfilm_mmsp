@@ -16,11 +16,6 @@
 
 using namespace MMSP;
 
-bool fexists(const char *filename) {
-	std::ifstream ifile(filename);
-	return ifile;
-}
-
 int main(int argc, char* argv[]) {
 	if ( argc > 4 || argc < 3 ) {
 		std::cout << "Usage: " << argv[0] << " data.dat grain_id output.csv\n";
@@ -122,8 +117,7 @@ int main(int argc, char* argv[]) {
 	  // read number of blocks
 	  int blocks;
 	  input.read(reinterpret_cast<char*>(&blocks), sizeof(blocks));
-
-    std::vector<int>* grain_sizes = new std::vector<int>;
+//    std::vector<int>* grain_sizes = new std::vector<int>;
 
     double number_of_pixels=0.0;
     int number_of_grains = 0;
@@ -193,12 +187,17 @@ int main(int argc, char* argv[]) {
               x[0] = lmin[0] + l;
               x[1] = lmin[1] + k;
 //              output << x[0] <<" "<< x[1] <<" "<< colors[GRID(x)%est_grains] <<"\n";
+//std::cout<< x[0] << " " << x[1] << "\n";
               output << x[0] << " " << x[1] << " " << GRID(x) << "\n";  //no color randomization
+//std::cout<< x[0] << " " << x[1] << "\n";
+//std::cout<< "GRID(x) "<<GRID(x) << "\n";
               if(max_grain_id<GRID(x)){
                 max_grain_id=GRID(x);
-                (*grain_sizes).resize(max_grain_id+1, 0);
+//std::cout<< "max_grain_id "<<max_grain_id << "\n";
+//                (*grain_sizes).resize(max_grain_id+1, 0);
               }
-              (*grain_sizes)[GRID(x)]+=1;
+//              (*grain_sizes)[GRID(x)]+=1;
+//std::cout<< "12314" << "\n";
             } // for l
 				  } // for k 	
 				} else if (dim == 3) {
@@ -215,9 +214,9 @@ int main(int argc, char* argv[]) {
                 output << x[0] <<" "<< x[1] <<" "<< x[2] <<" "<< GRID(k) << "\n";  //no color randomization
                 if(max_grain_id<GRID(x)){
                   max_grain_id=GRID(x);
-                  (*grain_sizes).resize(max_grain_id+1, 0);
+//                  (*grain_sizes).resize(max_grain_id+1, 0);
                 }
-                (*grain_sizes)[GRID(x)]+=1;
+//                (*grain_sizes)[GRID(x)]+=1;
               } // for m
             } // for k
           }// for l 
@@ -233,17 +232,17 @@ int main(int argc, char* argv[]) {
 		}// for int i //loop over blocks
     output.close();
     double average_grain_size = 0.0;
-    for(int i=0; i<(*grain_sizes).size(); i++){
-      if(((*grain_sizes)[i]!=0))
-        number_of_grains += 1;
-    }
+//    for(int i=0; i<(*grain_sizes).size(); i++){
+//      if(((*grain_sizes)[i]!=0))
+//        number_of_grains += 1;
+//    }
     average_grain_size = sqrt(number_of_pixels/number_of_grains/3.14);
     std::cout<<"number of grains is  "<<number_of_grains<<std::endl;
     std::ofstream ofs("grain_size.txt", std::ios::out|std::ios::app);
     ofs<<average_grain_size<<std::endl;
     ofs.close();
 
-    (*grain_sizes).clear();
+//    (*grain_sizes).clear();
   }// if (not sparse_type and not vector_type)
   else{
 	if ( argc != 4 ) {
