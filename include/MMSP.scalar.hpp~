@@ -66,22 +66,6 @@ public:
 	}
 
 /*ACME project*/
-	scalar& AssignPfield(const T& value) {
-		Pfield = value;
-		return Pfield;
-	}
-	scalar& AssignPfield(const scalar& s) {
-		Pfield = s.Pfield;
-		return Pfield;
-	}
-	template <typename U> scalar& AssignPfield(const U& value) {
-		Pfield = static_cast<T>(value);
-		return Pfield;
-	}
-	template <typename U> scalar& AssignPfield(const scalar<U>& s) {
-		Pfield = static_cast<T>(s);
-		return Pfield;
-	}
 	scalar& AssignTmp(const T& value) {
 		tmp = value;
 		return tmp;
@@ -157,7 +141,6 @@ private:
 	T data;
 
   /* ACME project*/
-  double Pfield;
   double tmc;
   double tmp;
   /* ACME project*/
@@ -315,7 +298,6 @@ public:
 	// object data
 	scalar<T>* data;
 /*ACME project*/
-  scalar<double>* Pfield;
   scalar<double>* tmp;
   scalar<double>* tmc;
 /*ACME project*/
