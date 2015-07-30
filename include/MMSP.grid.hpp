@@ -504,7 +504,7 @@ public:
 		return *p;
 	}
 
-	double& AccessToTmp(MMSP::vector<int> x) const {
+	double& AccessToTmp(MMSP::vector<int> x) {
 		double* ptemp = tmp;
 		for (int i=0; i<dim; i++) {
 			check_boundary(x[i], x0[i], x1[i], b0[i], b1[i]);
@@ -513,7 +513,7 @@ public:
 		return *ptemp;
 	}
 
-	double& AccessToTmc(MMSP::vector<int> x) const {
+	double& AccessToTmc(MMSP::vector<int> x) {
 		double* pmc = tmc;
 		for (int i=0; i<dim; i++) {
 			check_boundary(x[i], x0[i], x1[i], b0[i], b1[i]);
@@ -616,6 +616,13 @@ public:
 				send_max[i] = x0[i] + ghosts;
 				recv_min[i] = x1[i];
 				recv_max[i] = x1[i] + ghosts;
+
+/*---------cancel periodic boundary condition-----------*/
+        if(x0[i] == g0[i])
+				  send_min[i] = send_max[i];
+        if(x1[i] == g1[i])
+          recv_min[i] = recv_max[i];
+/*---------cancel periodic boundary condition-----------*/
 
 				unsigned long send_size = this->buffer_size(send_min, send_max);
 				unsigned long recv_size = 0;
@@ -874,8 +881,8 @@ public:
         }
 
         else if(sublattice==7){
-          send_min[i] = ((x1[i] - ghosts)%2!=0? x1[i]-ghosts:x1[i]); // only send odd number
-          recv_min[i] = ((x0[i] - ghosts)%2!=0? x0[i]-ghosts:x0[i]); // only recv odd number
+          send_min[i] = ((x1[i] - ghosts)%2!=0? (x1[i]-ghosts):x1[i]); // only send odd number
+          recv_min[i] = ((x0[i] - ghosts)%2!=0? (x0[i]-ghosts):x0[i]); // only recv odd number
           for (int l=0; l<dim; l++) {
             if(l!=i){
               send_min[l] = (send_min[l]%2!=0?send_min[l]:send_min[l]+1); //the first element of that 1 layer strip should be odd
@@ -887,7 +894,7 @@ public:
 
 				unsigned long send_size = this->buffer_size_save(send_min, send_max);
 				unsigned long recv_size = 0;
-
+//std::cout<<sublattice<<" "<<send_min[0]<<" "<<send_max[0]<<" "<<send_min[1]<<" "<<send_max[1]<<" "<<send_min[2]<<" "<<send_max[2]<<" "<<send_size<<std::endl;
 				// Small data transfer: blocking Sendrecv should scale -- but don't plan on it.
 				MPI::Request requests[2];
 				requests[0] = MPI::COMM_WORLD.Isend(&send_size, 1, MPI_UNSIGNED_LONG, send_proc, 100); // send number of ghosts
@@ -897,7 +904,6 @@ public:
 				char* send_buffer = new char[send_size];
 				char* recv_buffer = new char[recv_size];
 				send_size = this->to_buffer_save(send_buffer, send_min, send_max);
-
 				// Large data transfer requires non-blocking communication
 				requests[0] = MPI::COMM_WORLD.Isend(send_buffer, send_size, MPI_CHAR, send_proc, 200); // send ghosts
 				requests[1] = MPI::COMM_WORLD.Irecv(recv_buffer, recv_size, MPI_CHAR, recv_proc, 200); // receive ghosts
@@ -930,7 +936,7 @@ public:
 				recv_max[i] = x1[i] + ghosts;
 
         if(dim==2){
-        if(sublattice==0){
+        if(sublattice==0 ){
           send_min[i] = (x0[i]%2==0? x0[i]:x0[i]+ghosts); // only send even number
           recv_min[i] = (x1[i]%2==0? x1[i]:x1[i]+ghosts); // only recv even number
           send_min[abs(1-i)] = (send_min[abs(1-i)]%2==0?send_min[abs(1-i)]:send_min[abs(1-i)]+1); //the first element of that 1 layer strip should be even
@@ -1144,6 +1150,13 @@ public:
           }    
         }
         }//dim == 3
+
+/*---------cancel periodic boundary condition-----------*/
+        if(x0[i] == g0[i])
+				  send_min[i] = send_max[i];
+        if(x1[i] == g1[i])
+          recv_min[i] = recv_max[i];
+/*---------cancel periodic boundary condition-----------*/
 
 				unsigned long send_size = this->buffer_size_save(send_min, send_max);
 				unsigned long recv_size = 0;
